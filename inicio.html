@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="sp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+    <link rel="stylesheet" href="./Css/style.css">
+    <link rel="website icon" type="icon" href="./img/icon3.png">
+</head>
+<body>
+    <form class="formulario" action="http://localhost:3000/inicia" method="POST">
+        <h1>Ingrese sus datos</h1>
+        <label for="Tipo">Tipo de documento</label>
+            <select name="Tipo" id="Tipo">
+                <option value="CC">CC</option>
+                <option value="TI">TI</option>
+
+                <!--  -->
+            
+                
+            </select>
+
+        <label id="Documento" for="Documento">Documento</label>
+        <input type="text"  name="Documento" required>
+    
+
+    
+        <button class="boton"  type="submit">Iniciar Sesión</button>
+        <a href="index.html"><button class="boton" type="button">Atras</button></a>
+
+      </form>
+</body>
+</html>
