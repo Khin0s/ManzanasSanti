@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualiza</title>
+    <link rel="website icon" type="icon" href="./img/icon3.png">
+    <link rel="stylesheet" href="./Css/estilos.css">
+
+</head>
+<body>
+    <header>
+        <img class="banner" src="./img/bannerRe.png" alt="#">
+        <button id="btnCerrarSesion">CERRAR SESION</button>
+        <button><a href="/admin.html">Atras</a></button>
+    </header>
+    <form action="http://localhost:3000/Servicio" class="formu" method="post" id="actualiza">
+        <h1 id="inicia"> REGISTRAR SERVICIOS</h1>
+        <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Nombre</label>
+            <input type="text" name="Nombre" id="Nombre" id="exampleInputPassword1" required>
+          </div>
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label">Tipo</label>
+            <input type="text" name="Tipo" id="Tipo" id="exampleInputPassword1" required>
+          </div>
+        <button type="submit" class="btn btn-primary">Enviar</button>
+        
+    
+
+</form>
+</div>
+<script>
+  const btnCerrarSesion =document.getElementById('btnCerrarSesion');
+        btnCerrarSesion.addEventListener('click',()=>{
+            const xhrCerrarSesion = new XMLHttpRequest();
+            xhrCerrarSesion.open('POST','/cerrar-sesion',true);
+            xhrCerrarSesion.onreadystatechange=function(){
+                if(xhrCerrarSesion.readyState===4 && xhrCerrarSesion.status===200){
+                    window.location.href= '/index.html';
+            }
+            else{
+                        console.error('error al cerrar sesion')
+                    }
+        }
+        xhrCerrarSesion.send();
+    })
+    //no permite ir hacia atras
+    window.onload=function(){
+        window.history.forward();
+    };
+    //caundo va hacia atras se recarga la pagina
+    window.onpageshow=function(evento){
+        if(evento.persisted){
+            window.location.reload();
+        }
+
+    }
+</script>
+</body>
+
+</html>
