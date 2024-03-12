@@ -144,22 +144,7 @@
         })
         
 
-//eliminar usuarios
-function eliminarUsuario(id_user){
-    const xhrEliminarUsuario = new XMLHttpRequest();
-    xhrEliminarUsuario.open('DELETE', `/eliminar-usuario/${id_user}`,true);
-    xhrEliminarUsuario.setRequestHeader('Content-Type', 'application/json');
-    xhrEliminarUsuario.onreadystatechange=function(){
-        if(xhrEliminarUsuario.readyState===4 && xhrEliminarUsuario.status===200){
-            alert("Usuario Eliminado");
-            window.location.reload();
-        }
-        else{
-                console.error('error al eliminar el servicio');
-            }
-    }
-    xhrEliminarUsuario.send();
-}
+
 
     btnManzanas.addEventListener('click',()=>{
             const xhrObtenerManzanas = new XMLHttpRequest();
@@ -257,6 +242,40 @@ function eliminarUsuario(id_user){
         }
     }
 })
+
+function eliminarUsuario(id_user){
+    const xhrEliminarUsuario = new XMLHttpRequest();
+    xhrEliminarUsuario.open('DELETE', `/eliminar-usuario/${id_user}`,true);
+    xhrEliminarUsuario.setRequestHeader('Content-Type', 'application/json');
+    xhrEliminarUsuario.onreadystatechange=function(){
+        if(xhrEliminarUsuario.readyState===4 && xhrEliminarUsuario.status===200){
+            alert("Usuario Eliminado");
+            window.location.reload();
+        }
+        else{
+                console.error('error al eliminar el servicio');
+            }
+    }
+    xhrEliminarUsuario.send();
+}
+
+function eliminarservicio(id_servicios){
+    console.log(id_servicios)
+    const xhrEliminarServicio = new XMLHttpRequest();
+    xhrEliminarServicio.open('DELETE', `/eliminar-servicios/${id_servicios}`,true);
+    xhrEliminarServicio.setRequestHeader('Content-Type', 'application/json');
+    xhrEliminarServicio.onreadystatechange=function(){
+        if(xhrEliminarServicio.readyState===4 && xhrEliminarServicio.status===200){
+            alert("Servicio Eliminado");
+            window.location.reload();
+        }
+        else{
+        console.error('error al eliminar el servicio');
+    }
+    }
+    xhrEliminarServicio.send();
+}
+
 
 
     </script>
