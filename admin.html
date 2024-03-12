@@ -17,11 +17,13 @@
         
     </div>
     </header>
-    <H1>BIENVENIDO ADMINISTRAD@R: <span id="nombreUsuario"></span></H1>
+
+    <H1>BIENVENIDO ADMINISTRADOR: <span id="nombreUsuario"></span></H1>
     <button id="btnUsuarios" class="btn btn-outline-secondary">Visualizar Usuarios</button>
     <button id="btnManzanas" class="btn btn-outline-secondary">Visualizar Manzanas</button>
     <button id="btnServicios" class="btn btn-outline-secondary">Visualizar Servicios</button>
-    <br>
+    
+    
     <br>
     <div id="tablausuarios" style="display: none;" class="w-100">
         <h2>Usuarios-Registrados</h2>
@@ -39,6 +41,7 @@
         <tbody id="lista-usuarios"></tbody>
         </table>
     </div>
+
     <div id="tablaManzanas" style="display: none;">
         <h2>Manzanas</h2>
 
@@ -55,20 +58,19 @@
         <a href="./Nuevamanzana.html"><button>Crear Nueva Manzana</button></a>
         </div>
 
-        <div id="servicios-guardados-container" class="w-25" style="display: none;">
+        <div id="tablaservicios"class="w-100" style="display: none;">
             <center><h2>Servicios Guardados</h2></center> 
-             <table id="tabla-servicios-guardados"  class="table table-success table-striped-columns">
+             <table id="tabla-visualizar-servicios"  class="table table-striped-columns">
                <thead>
                  <tr>
-                   <th>Servicio</th>
-                   <th>Fecha</th>
-                   <th>Eliminar</th>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Tipo de servicio</th>
                  </tr>
                </thead>
-               <tbody id="lista-servicios-guardados"></tbody>
+               <tbody id="lista-servicios"></tbody>
              </table>
            </div>
-           
 
 
     
@@ -99,9 +101,9 @@
         const btnManzanas = document.getElementById('btnManzanas');
         const listamanzanas = document.getElementById('lista-manzanas');
 
-        const btnServicios = document.getElementById('btnServicios');
-        const serviciosGuardadosContainer = document.getElementById('servicios-guardados-container')
-        const listaServiciosGuardados = document.getElementById('lista-servicios-guardados');
+        
+
+        
 
         //obtener usuarios
         btnUsuarios.addEventListener('click',()=>{
@@ -159,7 +161,7 @@ function eliminarUsuario(id_user){
     xhrEliminarUsuario.send();
 }
 
-btnManzanas.addEventListener('click',()=>{
+    btnManzanas.addEventListener('click',()=>{
             const xhrObtenerManzanas = new XMLHttpRequest();
             xhrObtenerManzanas.open('POST', '/mostrar-manzanas', true);
             xhrObtenerManzanas.setRequestHeader('Content-Type', 'application/json');
@@ -194,32 +196,41 @@ btnManzanas.addEventListener('click',()=>{
 
         //visualizar servicios
 
-        btnServicios.addEventListener('click', ()=>{
-            const xhrObtenerServiciosGuardados = new XMLHttpRequest();
-            xhrObtenerServiciosGuardados.open('POST','/obtener-servicios-guardados-admi',true);
-            xhrObtenerServiciosGuardados.onreadystatechange=function(){
-                if(xhrObtenerServiciosGuardados.readyState==4){
-                    if(xhrObtenerServiciosGuardados.status===200){
-                        const data=JSON.parse(xhrObtenerServiciosGuardados.responseText);
-                        listaServiciosGuardados.innerHTML =""
-                        data.serviciosGuardados.map(servicio=>
-                        `
-                        <tr>
+        const  tablaservicios=document.getElementById('tablaservicios');
+        const TablaVisualizarServicios = document.getElementById('tabla-visualizar-servicios');
+        const btnServicios = document.getElementById('btnServicios');
+        const listaservicios = document.getElementById('lista-servicios');
+
+        btnServicios.addEventListener('click',()=>{
+            const xhrObtenerServicios = new XMLHttpRequest();
+            xhrObtenerServicios.open('POST', '/mostrar-servicios', true);
+            xhrObtenerServicios.setRequestHeader('Content-Type', 'application/json');
+            xhrObtenerServicios.onreadystatechange=function(){
+                if(xhrObtenerServicios.readyState===4){
+                    if(xhrObtenerServicios.status===200){
+                        const data3 = JSON.parse(xhrObtenerServicios.responseText)
+                        listaservicios.innerHTML = '';
+                        data3.servicioss.map(servicio=>{
+                            const row=document.createElement('tr');
+                            row.innerHTML=
+                            `
+                            <td>${servicio.id_servicios}</td>
                             <td>${servicio.Nombre}</td>
-                            <td>${new Date (servicio.fecha).toUTCString()}</td>
-                            <td><button class="btn btn-danger" onclick="eliminarServicio(${servicio.id})">Eliminar</button></td>
-                        </tr>
-                        `).join('');
-
-
-                    serviciosGuardadosContainer.style.display='block';
-                    } else{
-                        console.error('error al obtener servicios guardados')
+                            <td>${servicio.Tipo}</td>
+                            <td><button class="actualizarservicio" onclick="actualizarservicio(${servicio})">Actualizar</button></td>
+                            <td><button onclick="eliminarservicio(${servicio.id_servicios})">Eliminar</button></td>
+                            `
+                            TablaVisualizarServicios.appendChild(row);
+                        })
+                        tablaservicios.style.display ='block'
+                    }else{
+                        console.error('error al obtener manzanas')
                     }
+
                 }
             }
-            xhrObtenerServiciosGuardados.send();
-        });
+            xhrObtenerServicios.send();
+        })
 
         const btnCerrarSesion =document.getElementById('btnCerrarSesion');
         btnCerrarSesion.addEventListener('click',()=>{

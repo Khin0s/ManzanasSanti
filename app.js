@@ -7,7 +7,7 @@ const path=require('path');
 const { Console } = require('console');
 //descargar paquete npm i -g --save express-session
 
-// Configurar middlewareee
+// Configurar middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(__dirname));
@@ -78,7 +78,7 @@ app.post('/inicia', async(req,res)=>{
   const {Tipo,Documento}= req.body
   try{
     //Verifique las credenciales
-    const conect=await mysql.createConnection(db) //reemplazar el db.query por conect.execute
+    const conect=await mysql.createConnection(db) 
     const [indicador]=await conect.execute('SELECT * FROM usuario WHERE Documento=? AND Tipo=?',[Documento,Tipo]);
     console.log(indicador);
     if(indicador.length>0){
@@ -208,18 +208,13 @@ catch(error){
 
 
 
+/////ADMI
 
-
-
-
-
-
-//parte de administrador
 app.post('/mostrar-usuarios',async(req,res)=>{
   const Documento=req.session.Documento;
   try{
     const conect= await mysql.createConnection(db)
-const [obtusuario] = await conect.execute('SELECT * FROM usuario WHERE usuario.rol="usuario"',[Documento]);
+const [obtusuario] = await conect.execute('SELECT * FROM usuario WHERE usuario.rol="usuario"',[Documento]); 
 console.log(obtusuario);
   res.json({usuarios: obtusuario})
 await conect.end()
@@ -230,17 +225,19 @@ catch(error){
 }
 })
 
-//borrar usuarios
-app.delete('/eliminar-usuario/:id_user',async(req,res)=>{
-  const IdU=req.params.id_user;
-  
 
+
+
+//borrar usuario
+app.delete('/eliminar-usuario/:id_user',async(req,res)=>{
+  const IdU=req.params.id_user
+  console.log("holaa", IdU)
   try{
     const conect= await mysql.createConnection(db);
     await conect.query('DELETE from solicitudes where id1=?',[IdU]);
     await conect.execute('DELETE FROM usuario WHERE usuario.id_user=?',[IdU])
     res.status(200).send("usuario borrado")
-    console.log("holaa", IdU)
+    
   await conect.end();
   }
   catch(error){
@@ -248,9 +245,7 @@ app.delete('/eliminar-usuario/:id_user',async(req,res)=>{
    res.status(500).send('Error En El Servidor.. :c');
   }
 })
-
-//mostrar manzanas 
-
+//Mostrar manzanas
 app.post('/mostrar-manzanas',async(req,res)=>{
   const Documento=req.session.Documento;
   try{
@@ -258,6 +253,7 @@ app.post('/mostrar-manzanas',async(req,res)=>{
     const [obtmanzana] = await conect.execute('SELECT * FROM manzanas WHERE manzanas.id_manzanas=id_manzanas ',[Documento].id_manzana)
     console.log("manzanasss",obtmanzana)
     res.json({manzanas: obtmanzana})
+
     await conect.end()
   }
   catch(error){
@@ -266,16 +262,13 @@ app.post('/mostrar-manzanas',async(req,res)=>{
   }
 })
 
-
-
-
-//crear manzanas
+//crear manzana
 app.post('/Manzanita', async (req,res)=>{
   const { Nombre,  Direccion} = req.body; 
   try{
-  //Verificar manzanas
+  //Verificador de usuario
   const conect=await mysql.createConnection(db)
-  const [indicador]=await conect.execute('SELECT * FROM manzanas WHERE Nombre=? AND Direccion=?',[Nombre,  Direccion]);
+  const [indicador]=await conect.execute('SELECT * FROM manzanas WHERE `Nombre`=? AND `Direccion`=?',[Nombre,  Direccion]);
   if(indicador.length>0){
     res.status(409).send(`
     <script>
@@ -287,13 +280,13 @@ app.post('/Manzanita', async (req,res)=>{
     `)
   }
   else{
-  await conect.execute('INSERT INTO manzanas (Nombre, Direccion) VALUES (?, ?)',
+  await conect.execute('INSERT INTO manzanas (`Nombre`, Direccion) VALUES (?, ?)',
   [Nombre, Direccion])
   res.status(201).send(`
   <script>
     window.onload = function(){
-      alert("Datos Guardados :3");
-      window.location.href = '/nue.html'; 
+      alert("Manzana Registrada ");
+      window.location.href = '/admin.html'; 
     }
   </script>
   `)}
@@ -305,56 +298,134 @@ app.post('/Manzanita', async (req,res)=>{
       <script>
         window.onload = function(){
           alert("Error En El Envío... :c");
-          window.location.href = '/nuevaManzana.html';
+          window.location.href = '/Actualizar.html';
         }
       </script>
       `)
       
   }
 })
-//mostrar los servicios que tiene el usuario
-app.post('/obtener-servicios-guardados-admi',async(req,res)=>{
+
+//Mostrar los servicios 
+app.post('/mostrar-servicios',async(req,res)=>{
   const Documento=req.session.Documento;
+  const IdS=req.params.id_servicios;
   try{
     const conect= await mysql.createConnection(db)
-    const [IDU] =await conect.execute('SELECT usuario.id_user FROM usuario WHERE usuario.Documento=?',[Documento]);
-    console.log("este es el documento",IDU)
-    const [serviciosGuardadosData] =await conect.query('SELECT solicitudes.fecha, solicitudes.id_solicitudes, servicios.Nombre , usuario.Documento FROM solicitudes INNER JOIN usuario ON usuario.id_user = solicitudes.id1 INNER JOIN manzanas on manzanas.id_manzanas = usuario.id_manzanas INNER JOIN manzana_servicios on manzana_servicios.id_m = manzanas.id_manzanas INNER JOIN servicios ON servicios.id_servicios = manzana_servicios.id_s WHERE usuario.Documento=? AND servicios.id_servicios=solicitudes.codigoS ',[Documento])
-    
-    const serviciosGuardadosFiltrados=serviciosGuardadosData.map(servicio=>({
-      Nombre: servicio.Nombre,
-      fecha: servicio.fecha,
-      id: servicio.id_solicitudes
-    }))
-    res.json({serviciosGuardados: serviciosGuardadosFiltrados})
-    console.log("estos son los servicios guardados",serviciosGuardadosData);
-console.log("asdasd",serviciosGuardadosFiltrados);
+const [obtservicio] = await conect.execute('SELECT * FROM servicios WHERE id_servicios=id_servicios',[Documento]); 
+console.log(obtservicio);
+  res.json({servicioss: obtservicio})
+await conect.end()
+  }
+catch(error){
+  console.error('Error En El Servidor:',error);
+ res.status(500).send('Error En El Servidor.. :c');
+}
+})
+
+//Crear Servicio
+app.post('/Servicio', async (req,res)=>{
+  const { Nombre,  Tipo} = req.body; 
+  try{
+  //Verificador de usuario
+  const conect=await mysql.createConnection(db)
+  const [indicador]=await conect.execute('SELECT * FROM servicios WHERE `Nombre`=? AND `Tipo`=?',[Nombre,  Tipo]);
+  if(indicador.length>0){
+    res.status(409).send(`
+    <script>
+    window.onload = function(){
+      alert("Este Servicio Ya Existe");
+      window.location.href = '/ActualizarServicio.html';
+    }
+  </script>
+    `)
+  }
+  else{
+  await conect.execute('INSERT INTO servicios (`Nombre`, `Tipo`) VALUES (?, ?)',
+  [Nombre, Tipo])
+  res.status(201).send(`
+  <script>
+    window.onload = function(){
+      alert("Servicio Registrado ");
+      window.location.href = '/admin.html'; 
+    }
+  </script>
+  `)}
+  await conect.end()
+  }
+  catch(error){
+      console.error('Error en el servidor:', error);
+      res.status(500).send(`
+      <script>
+        window.onload = function(){
+          alert("Error En El Envío... :c");
+          window.location.href = '/Actualizar.html';
+        }
+      </script>
+      `)
+  }
+})
+
+
+app.post('/editar-usuario/:id_user',async(req,res)=>{
+  const { Nombre,  Tipo} = req.body; 
+  try{
+    //Verificador de usuario
+    const conect=await mysql.createConnection(db)
+    const [indicador]=await conect.execute('SELECT * FROM servicios WHERE `Nombre`=? AND `Tipo`=?',[Nombre,  Tipo]);
+    if(indicador.length>0){
+      res.status(409).send(`
+      <script>
+      window.onload = function(){
+        alert("Este Servicio Ya Existe");
+        window.location.href = '/ActualizarServicio.html';
+      }
+    </script>
+      `)
+    }
+    else{
+    await conect.execute('INSERT INTO servicios (`Nombre`, `Tipo`) VALUES (?, ?)',
+    [Nombre, Tipo])
+    res.status(201).send(`
+    <script>
+      window.onload = function(){
+        alert("Servicio Registrado ");
+        window.location.href = '/admin.html'; 
+      }
+    </script>
+    `)}
     await conect.end()
+    }
+    catch(error){
+        console.error('Error en el servidor:', error);
+        res.status(500).send(`
+        <script>
+          window.onload = function(){
+            alert("Error En El Envío... :c");
+            window.location.href = '/Actualizar.html';
+          }
+        </script>
+        `)
+    }
+  
+})
+
+//Eliminar Servicio
+app.delete('/eliminar-servicios/:id_servicios',async(req,res)=>{
+  const IdS=req.params.id_servicios;
+  try{
+    const conect= await mysql.createConnection(db);
+    await conect.execute('DELETE FROM manzana_servicios WHERE id_s=?',[IdS]);
+    await conect.execute('DELETE FROM servicios WHERE servicios.id_servicios=?',[IdS])
+    res.status(200).send("Servicio borrado")
+    console.log(IdS)
+  await conect.end();
   }
   catch(error){
     console.error('Error En El Servidor:',error);
    res.status(500).send('Error En El Servidor.. :c');
-}
+  }
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -371,6 +442,9 @@ app.post('/cerrar-sesion',(req,res)=>{
     }
   })
 })
+
+
+
 app.listen(3000, () => {
-    console.log("Servidor Node.js escuchando ");
-  })
+    console.log(`Servidor Node.js escuchando `);
+  }) 
